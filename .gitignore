@@ -1,0 +1,10 @@
+xenv.py
+env.py
+env
+!migrations/env.py
+*.pyc
+*.swp
+venv/
+node_modules/
+.vscode/
+client_secret_worker.json
