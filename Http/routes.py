@@ -4,7 +4,7 @@ base = Blueprint('base', __name__, template_folder='templates')
 
 @base.route('/', methods=['GET'])
 def login_page():
-	return render_template('login.html')
+	return render_template('index.html')
 
 @base.route('/register', methods=['GET'])
 def registration_page():

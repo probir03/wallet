@@ -1,0 +1,37 @@
+<div class="loginForm mx-auto">
+    <h3>Signup</h3>
+    <div class="auth-content">
+        <form name="registerForm" ng-submit="signup()">
+            <div class="form-group">
+                <label for="email" style="text-align: right;">Email</label>
+                <div>
+                    <input type="email" class="form-control form-control-sm" name="email" ng-model="user.email" autofocus required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="displayName" style="text-align: right;">DisplayName</label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" name="displayName" ng-model="user.displayName" autofocus required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div>
+                    <input type="password" class="form-control form-control-sm" name="password" ng-model="user.password" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="re-password">RePassword</label>
+                <div>
+                    <input type="password" class="form-control form-control-sm" name="re-password" ng-model="user.rePassword" required/>
+                </div>
+            </div>
+            <div style="clear: both;">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+        <div >
+            <span class="error">{{errorMsg}}</span>
+        </div>
+    </div>
+</div>

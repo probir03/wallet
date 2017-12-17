@@ -63,10 +63,24 @@ class TransactionTransformer(object):
             'id' : model.id,
             'transactionType' : model.transaction_type,
             'transactionAmount' : model.transaction_amount,
-            'transactionDate' : model.transaction_date,
+            'transactionDate' : Helpers.datetime_to_epoch(model.transaction_date),
             'isActive' : model.is_active,
-            'cancellation_date' : model.cancellation_date,
-            'cancelled_transaction' : model.cacelled_transaction.transform()\
-                 if model.cacelled_transaction is not None else None,
+            'remainingAmount' : model.remaining_amount,
+            'cancellationDate' : Helpers.datetime_to_epoch(model.cancellation_date) \
+                if model.cancellation_date is not None else None,
+            'cancelledTransaction' : model.cacellation_transaction_relation.transform('mini_transform') \
+                if model.cacellation_transaction_relation is not None else None,
             'wallet' : model.wallet.transform('mini_transform')
+        }
+
+    def mini_transform(self, model):
+        return {
+            'id' : model.id,
+            'transactionType' : model.transaction_type,
+            'transactionAmount' : model.transaction_amount,
+            'transactionDate' : Helpers.datetime_to_epoch(model.transaction_date),
+            'remainingAmount' : model.remaining_amount,
+            'isActive' : model.is_active,
+            'cancellationDate' : Helpers.datetime_to_epoch(model.cancellation_date)\
+                 if model.cancellation_date is not None else None,
         }

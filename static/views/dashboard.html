@@ -1,0 +1,134 @@
+<nav class="navbar navbar-expand-lg navbar-fixed">
+    <a class="navbar-brand" ui-sref="dashboard">WALLET</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item active px-2 my-auto">
+                <span class="p-1">Welcome {{userObj.customer.displayName}}</span>
+            </li>
+            <li class="nav-item px-2">
+                <button class="btn btn-info btn-sm" ng-click="openModal()">New Transaction</button>
+            </li>
+            <li class="nav-item px-2">
+                <button class="btn btn-primary btn-sm" ng-click="userLogout()">Logout</button>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="row mx-0 content-box">
+    <div class="col-md-9 col-lg-9 col-xl-9 col-sm-12 col-xs-12 row">
+        <ul class="transHeader col-12">
+            <li ng-class="{ 'activeHeader': status == 'active'}" ng-click="changeStatus('active')">Active</li>
+            <li ng-class="{ 'activeHeader': status == 'cancel'}" ng-click="changeStatus('cancel')">Cancelled</li>
+            <li ng-class="{ 'activeHeader': status == 'passbook'}" ng-click="changeStatus('passbook')">View Passbook</li>
+        </ul>
+        <div class="transList col-12">
+            <table class="table table-striped">
+                <thead class="thead-light">
+                    <th scope="col">Transaction Id</th>
+                    <th scope="col">Transaction Type</th>
+                    <th scope="col">Transaction Date</th>
+                    <th scope="col">Transaction Amount</th>
+                    <th scope="col" ng-if="status == 'cancel' || status == 'passbook'">Cancelled Date</th>
+                    <th scope="col" ng-if="status == 'active'">Action</th>
+                    <th scope="col" ng-if="status == 'passbook'">Remaining amount</th>
+                    <th scope="col" ng-if="status == 'passbook'">Status</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="list in transactionList.data track by $index">
+                    	<td><span>{{list.id}}</span></td>
+                        <td>
+                            <span class="trans-type" ng-class="{red: list.transactionType == 'DEBIT', green:list.transactionType == 'CREDIT'}">{{list.transactionType}}</span> <span class="cancel-label" ng-if="list.cancelledTransaction && (status == 'active' || status == 'passbook')" style="white-space: nowrap;">cancelled-id {{list.cancelledTransaction.id}}</span>
+                        </td>
+                        <td>{{list.transactionDate | date:'dd-MM-yyyy'}}</td>
+                        <td>{{list.transactionAmount}}</td>
+                        <td ng-if="status == 'cancel' || status == 'passbook'">{{list.cancellationDate | date:'dd-MM-yyyy'}}</td>
+                        <td ng-if="status == 'active'">
+                            <button class="btn btn-dark btn-sm" ng-click="cancelTransaction(list,$index)">cancel</button>
+                        </td>
+                        <td ng-if="status == 'passbook'">
+                            {{list.remainingAmount}}
+                        </td>
+                        <td ng-if="status == 'passbook'">
+                        	<span class="cancel-label" style="background-color: red" ng-if="!list.isActive">Cancel</span>
+                        	<span class="cancel-label" style="background-color: green" ng-if="list.isActive">Active</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div ng-if="transactionList.data.length == 0">
+            	<h3 style="color: #dcdcdc; text-align: center;">No Transactions Yet.</h3><b></b>
+            </div>
+        </div>
+        <nav ng-if="status != 'passbook'" aria-label="Page navigation example" class="w-100" style="background-color: #fff;">
+            <ul class="pagination justify-content-center pagination-sm">
+                <li class="page-item " ng-class="{'active':transactionList.meta.pagination.links.prev_page ,'disabled':!transactionList.meta.pagination.links.prev_page }">
+                    <a class="page-link" ng-click='pagination(transactionList.meta.pagination.links.prev_page)'>
+                        <<</a>
+                </li>
+                <li class="disabled"><a class="page-link">{{transactionList.meta.pagination.current_page}}</a></li>
+                <li class="page-item" ng-class="{'active':transactionList.meta.pagination.links.next_page ,'disabled':!transactionList.meta.pagination.links.next_page }">
+                    <a class="page-link" ng-click='pagination(transactionList.meta.pagination.links.next_page)'>>></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-md-3 col-lg-3 col-xl-3 col-sm-12 col-xs-12">
+        <div class="card card-wallet">
+            <div class="card-header">
+                Wallet Details
+            </div>
+            <div class="card-body">
+                <p class="card-text">Remaining Amount - {{userObj.customer.wallet.currentBalance}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="transactionModal" tabindex="-1" role="dialog" aria-labelledby="transactionModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New Transaction</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="newTransaction" ng-submit="createTransaction()">
+                    <div class="form-group">
+                        <label for="type">Transaction Type</label>
+                        <select class="form-control form-control-sm" name="type" id="type" ng-model="transaction.transactionType" placeholder="Select Transaction Type" ng-required="true">
+                            <option value="CREDIT">CREDIT</option>
+                            <option value="DEBIT">DEBIT</option>
+                        </select>
+                        <span class="error" ng-show="newTransaction.type.$touched && newTransaction.type.$invalid">This is required Field.</span>
+                    </div>
+                    <div class="form-group" ng-if="transaction.transactionType == 'DEBIT'">
+                        <label for="amount">Amount</label>
+                        <input type="number" class="form-control form-control-sm" name="amount" id="amount" min="1" placeholder="Enter Amount" max="{{wallet.currentBalance}}" ng-model="transaction.transactionAmount" ng-required="true">
+                        <span class="error" ng-show="newTransaction.amount.$touched && (newTransaction.amount.$error.max || newTransaction.amount.$error.min)">
+                        	Amount should be less than wallet amount and greater than 0. 
+                        </span>
+                        <span class="error" ng-show="newTransaction.amount.$touched && newTransaction.amount.$error.required">This is required Field.</span>
+                    </div>
+                    <div class="form-group" ng-if="transaction.transactionType != 'DEBIT'">
+                        <label for="amount">Amount</label>
+                        <input type="number" class="form-control form-control-sm" name="amount" id="amount" min="1" placeholder="Enter Amount" ng-model="transaction.transactionAmount" ng-required="true">
+                        <span class="error" ng-show="newTransaction.amount.$touched && newTransaction.amount.$error.min">
+                        	Amount should be  greater than 0. 
+                        </span>
+                        <span class="error" ng-show="newTransaction.amount.$touched && newTransaction.amount.$error.required">This is required Field.</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-success btn-sm" ng-disabled="newTransaction.$invalid">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+<input id="tokVar" type="hidden" value="{{token}}" />

@@ -47,10 +47,14 @@ class TransactionRepository():
         return result
 
     def paginate_filter_attribute(self, filter_keys, item, page):
-        return filer_by_paginated(self.model ,filter_keys, item=item, page=page)
+        return Repository.filer_by_paginated(self.model ,filter_keys, item=item, page=page)
 
     def filter_attribute(self, findBy):
         result = Repository.filter_attribute(self.model, findBy).first()
+        return result
+
+    def fetch_all_filter_attribute(self, findBy):
+        result = Repository.filter_attribute(self.model, findBy).order_by(self.model.transaction_date.desc()).all()
         return result
 
     def delete(self, findBy):

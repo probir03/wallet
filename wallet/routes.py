@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, json
 from views import WalletViews
-from decorators import login_required, api_login_required, check_wallet_amount_status
+from decorators import api_login_required, check_wallet_amount_status
 from App.Response import Response
 
 wallet = Blueprint('wallet', __name__, template_folder='templates')
@@ -22,7 +22,9 @@ route for a transaction request
 @check_wallet_amount_status
 def wallet_transactions(wallet_id):
 	if request.method == 'GET':
-		response = WalletViews.fetch_all_wallet_transaction(wallet_id)
+		response = WalletViews().fetch_all_wallet_transaction(wallet_id, request)
+		if 'type' in request.args and request.args['type'] == 'passbook':
+			return Response.respondWithCollection(response, hint='Transactions')
 		return Response.respondWithPaginatedCollection(response, hint='Transactions')
 	
 	response = WalletViews().request_transaction(wallet_id, request.json)

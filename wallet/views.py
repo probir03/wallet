@@ -13,7 +13,6 @@ class WalletViews(object):
 	create wallet
 	'''
 	def create_wallet(self, customer_id):
-		print "adsddsasdaada"
 		return CustomerWalletRepository().store({
 			'id' : Helpers.generate_unique_code(),
 			'customer_id' : customer_id,
@@ -31,8 +30,13 @@ class WalletViews(object):
 	'''
 	def fetch_all_wallet_transaction(self, wallet_id, request):
 		data = request.args
-		return TransactionRepository().paginate_filter_attribute({'wallet_id':wallet_id},\
+		if 'type' in data and data['type'] == 'passbook':
+			return TransactionRepository().fetch_all_filter_attribute({'wallet_id':wallet_id})
+			
+		is_active = True if 'type' in data and data['type'] == 'active' else False
+		return TransactionRepository().paginate_filter_attribute({'wallet_id':wallet_id, 'is_active' : is_active},\
 				data['item'] if 'item' in data else 10, data['page'] if 'page' in data else 1)
+		
 	'''
 	add a transaction
 	'''
@@ -42,7 +46,7 @@ class WalletViews(object):
 		transaction_repo = TransactionRepository()
 		transaction = transaction_repo.store(
 		{
-			'id' : Helpers.generate_unique_code(),
+			'id' : Helpers.generate_unique_numeric_code('string'),
 			'wallet_id' : wallet_id,
 			'transaction_type' : data['transactionType'],
 			'transaction_amount' : data['transactionAmount'],
@@ -85,17 +89,14 @@ class WalletViews(object):
 		if transaction.transaction_type == 'CREDIT':
 			#action for adding amount 
 			new_transaction_type = 'DEBIT'
-			wallet.current_balance -= transaction.transaction_amount
 		else : 
 			#action of deduction of amount
 			new_transaction_type = 'CREDIT'
-			wallet.current_balance += transaction.transaction_amount
 		
 		new_transaction = self.request_transaction(wallet.id, {
 				'transactionType' : new_transaction_type,
 				'transactionAmount' : transaction.transaction_amount
 			})
-		transaction.remaining_amount = wallet.current_balance
 		new_transaction.cancelled_transaction_id = transaction.id
 		db.session.commit()
 		return new_transaction

@@ -19,7 +19,7 @@ class Repository(object):
 	'''
 	@staticmethod
 	def filer_by_paginated(modelName, filterKeys, item=25, page=1):
-		return modelName.query.filter_by(**filterKeys).paginate(page=int(page), per_page=int(item), error_out=False)
+		return modelName.query.filter_by(**filterKeys).order_by(modelName.transaction_date.desc()).paginate(page=int(page), per_page=int(item), error_out=False)
 
 	'''
 	return data using filter by

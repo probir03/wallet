@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, json, session
 from views import AuthViews
-from decorators import login_required, api_login_required
+from decorators import api_login_required
 from App.Response import Response
 
 auth = Blueprint('auth', __name__, template_folder='templates')
@@ -11,7 +11,7 @@ Customer registration
 @auth.route('/register', methods=['POST'])
 def register_user():
 	response = AuthViews().create_customer(request.json)
-	return Response.respondOk("Successfully Registerd", statusCode=201)
+	return Response.respondWithItem(response, 201)
 
 '''
 Customer social signin

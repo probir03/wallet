@@ -84,7 +84,9 @@ class Transaction(BaseModel):
     cancellation_date = db.Column(db.DateTime, nullable=True)
     cancelled_transaction_id = db.Column(db.ForeignKey(u'transactions.id'), nullable=True)
 
-    cacelled_transaction = relationship(u'Transaction', uselist=False)
+    @property
+    def cacellation_transaction_relation(self):
+        return Transaction.query.filter(Transaction.id == self.cancelled_transaction_id).first()
 
     transformer = ModelTransformer.TransactionTransformer()
 

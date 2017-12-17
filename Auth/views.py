@@ -24,7 +24,7 @@ class AuthViews(object):
 		}
 		customer = repo.store(inputs)
 		WalletViews().create_wallet(customer.id)
-		return customer
+		return self.create_token(customer)
 
 	#social signin or login
 	def social_signin(self, provider):
@@ -58,18 +58,11 @@ class AuthViews(object):
 				'is_password_change_required' : False,
 				'logo' : customer_info['logo']
 			}
-			customer = self.create_customer(data)
+			return self.create_customer(data)
 		elif customer.logo is None :
 			customer.logo = customer_info['logo']
 			db.session.commit()
-		token_repo = CustomerTokenRepository()
-		customer_token = Helpers.access_token()
-		return token_repo.store(
-			{
-				'id' : Helpers.generate_unique_code().__str__(),
-				'token' : customer_token, 
-				'customer_id' : customer.id
-			})
+		return self.create_token(customer)
 
 	#legacy customer login
 	def legacy_login(self, request):
@@ -80,15 +73,20 @@ class AuthViews(object):
 			if validate:
 				token_repo = CustomerTokenRepository()
 				customer_token = Helpers.access_token()
-				return token_repo.store(
-				{
-					'id' : Helpers.generate_unique_code().__str__(),
-					'token' : customer_token, 
-					'customer_id' : customer.id
-				})
+				return self.create_token(customer)
 		raise WalletException('Invalid credentials', 422)
 
 	#Logout a customer
 	def logout(self, token):
 		token_repo = CustomerTokenRepository()
 		return token_repo.deleteToken(token)
+
+	def create_token(self, customer):
+		token_repo = CustomerTokenRepository()
+		customer_token = Helpers.access_token()
+		return token_repo.store(
+			{
+				'id' : Helpers.generate_unique_code().__str__(),
+				'token' : customer_token, 
+				'customer_id' : customer.id
+			})

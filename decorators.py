@@ -26,9 +26,10 @@ decorator for validate transaction debit amount
 '''
 def check_wallet_amount_status(func):
 	def wraps(wallet_id, *args, **kwargs):
-		wallet = CustomerWalletRepository().filter_attribute({'id' : wallet_id})
-		if request.json['transactionType'] == 'DEBIT' and request.json['transactionAmount'] > wallet.current_balance:
-			raise WalletException("Insufficent Fund for the Debit transaction")
+		if request.method == "POST":
+			wallet = CustomerWalletRepository().filter_attribute({'id' : wallet_id})
+			if request.json['transactionType'] == 'DEBIT' and request.json['transactionAmount'] > wallet.current_balance:
+				raise WalletException("Insufficent Fund for the Debit transaction")
 		return func(wallet_id, *args, **kwargs)
 	wraps.func_name = func.func_name
 	return wraps

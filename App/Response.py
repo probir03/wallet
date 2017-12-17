@@ -23,7 +23,7 @@ class Response(object):
 	    response_data = []
 	    response = dict(())
 	    for item in data:
-	        response_data.append(data.transformer()) 
+	        response_data.append(item.transform()) 
 	    response['data'] = response_data
 	    response['code'] = statusCode
 	    response['notification'] = {
@@ -53,8 +53,10 @@ class Response(object):
 	def respondWithPaginatedCollection(data, statusCode = 200, message = 'Success', hint=''):
 		response_data = []
 		response = dict(())
+		print data.prev_num
+		print data.next_num
 		for item in data.items:
-			response_data.append(data.transformer()) 
+			response_data.append(item.transform()) 
 		response['data'] = response_data
 		response['code'] = statusCode
 		response['meta'] = {

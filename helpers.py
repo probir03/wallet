@@ -1,6 +1,6 @@
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, json
 import bcrypt, uuid, random, requests
-import time
+import time, urllib
 from datetime import datetime, timedelta
 from app import app
 
@@ -41,8 +41,12 @@ class Helpers(object):
     @staticmethod
     def url_for_other_page(page):
         args = dict(request.args)
-        args['page'] = page
-        return url_for(request.endpoint, _external=True, **args)
+        ag = dict()
+        for key, a in args.iteritems():
+            ag[key] = request.args.get(key)
+        ag['page'] = page
+        return (request.base_url+'?'+urllib.urlencode(ag)).strip()
+
     '''
     To generate unique code
     uuid package
@@ -55,8 +59,11 @@ class Helpers(object):
     To generate unique big integer code of length 10
     '''
     @staticmethod
-    def generate_unique_numeric_code():
-        return int((uuid.uuid4().int.__str__())[:10])
+    def generate_unique_numeric_code(type='int'):
+        if type == 'int':
+            return int((uuid.uuid4().int.__str__())[:10])
+        return (uuid.uuid4().int.__str__())[:12]
+            
     '''
     error message
     '''

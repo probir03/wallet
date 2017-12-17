@@ -7,6 +7,8 @@
   border: none;
   border-radius: 2px;
   padding: 16px 24px;
+  margin-top:5%;
+  width:40%;
 
   a {
   text-decoration: none;
@@ -121,4 +123,80 @@ label {
 
 .content {
   text-align: center;
+}
+nav{
+  background-color: #c7c6c6;
+}
+.navbar-header{
+  color:#000;
+}
+.transHeader{
+    display: inline-flex;
+    list-style: none;
+    padding: 0px;
+    border-bottom: 1px solid #dcdcdc;
+}
+.transHeader > li{
+  padding: .5rem 1rem;
+  cursor: pointer;
+}
+.table th{
+  padding:0.5rem .75rem;
+  font-weight: 500;
+  font-size: 14px;
+}
+.table td{
+  padding:  0.5rem .75rem;
+  font-weight: 400;
+  font-size: 14px;
+}
+.activeHeader{
+  background-color: #dcdcdc;
+  border-bottom:2px solid #000;
+}
+.btn{
+  cursor:pointer;
+}
+.navbar-fixed{
+  width:100%;
+  position:fixed;
+  top:0px;
+  left:0px;
+  right:0px;
+  z-index:10;
+}
+.card-wallet{
+  position: sticky;
+  top:60px;
+}
+.card-wallet > .card-header{
+  padding:0.5rem 0.75rem;
+  background-color:green;
+  color:#fff;
+}
+.cancel-label{
+  font-size: 10px;
+  background-color: #2196F3;
+  line-height: 14px !important;
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+.content-box{
+  margin-top:60px;
+}
+.error{
+    color: red;
+    font-size: 12px;
+
+}
+.trans-type{
+  font-weight: 500;
+  font-size: 13px;
+}
+.red{
+   color:red;
+}
+.green{
+  color:green;
 }
