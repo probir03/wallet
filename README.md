@@ -1,5 +1,5 @@
 # wallet
-Create env.py file and add keys
+Create env.py file ($ touch env.py) and add keys
 
 	APP_ENV = 'local'
 
@@ -25,7 +25,7 @@ Run Command
 Go to Browser and hit
 
 	```
-	 http://127.0.0.1/
+	 http://127.0.0.1:5000/
 
 	 Register and login
 	 ```
