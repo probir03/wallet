@@ -3,7 +3,7 @@ Create env.py file ($ touch env.py) and add keys
 
 	APP_ENV = 'local'
 
-	DEBUG = True/Flase
+	DEBUG = <True/Flase>
 
 	SQLALCHEMY_DATABASE_URI = 
 	'postgresql://<database-username>:<password>@localhost/<database-name>'
