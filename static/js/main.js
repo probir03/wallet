@@ -233,6 +233,16 @@
 			$scope.transactionList = getList.data;
 			$scope.status = 'active';
 
+			$scope.totalAmount = 0;
+
+			$scope.transactionList.data.forEach(function(item, index){
+				if(item.transactionType == 'CREDIT'){
+					$scope.totalAmount += item.transactionAmount;
+				} else {
+					$scope.totalAmount -= item.transactionAmount;
+				}
+			}); 
+
 			$scope.getList = function(type){
 				apiFactory.getTransactionList($scope.wallet.id,type).then(function(response){
 					$scope.transactionList = response.data;
